@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace LinqConsoleApp
 {
@@ -214,6 +216,14 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad2()
         {
+            var res = from emp in Emps
+                      where emp.Job == "Frontend programmer" && emp.Salary > 1000
+                      orderby emp.Ename descending
+                      select new
+                      {
+                          Surname = emp.Ename,
+                          Job = emp.Job
+                      };
             
 
         }
@@ -223,6 +233,8 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad3()
         {
+            var res = (from emp in Emps
+                       select emp.Salary).Max();
           
         }
 
@@ -231,6 +243,14 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad4()
         {
+            var res = from emp in Emps
+                      where emp.Salary == (from e in Emps
+                                           select e.Salary).Max()
+                      select new
+                      {
+                          Surname = emp.Ename,
+                          Job = emp.Job
+                      };
 
         }
 
@@ -239,6 +259,12 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad5()
         {
+            var res = from emp in Emps
+                      select new
+                      {
+                          Surname = emp.Ename,
+                          Job = emp.Job
+                      };
 
         }
 
@@ -249,6 +275,14 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad6()
         {
+            var res = from emp in Emps
+                      join dep in Depts on emp.Deptno equals dep.Deptno
+                      select new
+                      {
+                          Surname = emp.Ename,
+                          Job = emp.Job,
+                          Dept = dep.Dname
+                      };
 
         }
 
@@ -257,6 +291,14 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad7()
         {
+            var res = Emps.GroupBy(
+                emp => emp.Job,
+                emp => emp.Job,
+                (job, count) => new
+                {
+                    Job = job,
+                    Count = count.Count()
+                });
 
         }
 
@@ -266,7 +308,7 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad8()
         {
-
+            var res = Emps.Where(emp => emp.Job == "Backend programmer").Any();
         }
 
         /// <summary>
@@ -275,6 +317,7 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad9()
         {
+            var res = Emps.Where(emp => emp.Job == "Frontend programmer").OrderByDescending(emp => emp.HireDate).Take(1);
 
         }
 
@@ -285,6 +328,13 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad10Button_Click()
         {
+            var res = from emp in Emps
+                      select new
+                      {
+                          Ename = emp.Ename,
+                          Job = emp.Job,
+                          HireDate = emp.HireDate
+                      };
 
         }
 
@@ -298,7 +348,12 @@ namespace LinqConsoleApp
         //typu CROSS JOIN
         public void Przyklad12()
         {
-
+            var res = Emps.SelectMany(emp => Depts,
+                (emp, dept) => new
+                {
+                    Employee = emp,
+                    Dept = dept
+                });
         }
     }
 }
